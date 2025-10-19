@@ -1,4 +1,4 @@
-const PORT = 443;
+const PORT = process.env.PORT || 443;
 const VALID_USER_IDS = (process.env.ID || '2ea73714-138e-4cc7-8cab-d7caf476d51b').split(',');
 const configUserID = VALID_USER_IDS[0];
 
@@ -115,16 +115,16 @@ function websocket() {
                 const { addressRemote, portRemote, rawData, nlessVersion } = processNlessHeader(nlessBuffer);
                 ws.send(Buffer.concat([nlessVersion, Buffer.from([0])]));
                 const duplex = createWebSocketStream(ws);
-                net.connect({ host: addressRemote, port: portRemote }, function() {
+                net.connect({ host: addressRemote, port: portRemote }, function () {
                     this.write(rawData);
-                    duplex.on('error', () => {}).pipe(this).on('error', () => {}).pipe(duplex);
+                    duplex.on('error', () => { }).pipe(this).on('error', () => { }).pipe(duplex);
                 }).on('error', () => {
                     duplex.destroy();
                 });
             } catch (error) {
                 ws.close(1008, 'Invalid user');
             }
-        }).on('error', () => {});
+        }).on('error', () => { });
     });
 
     server.listen(PORT);
